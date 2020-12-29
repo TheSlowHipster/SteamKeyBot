@@ -1,0 +1,92 @@
+{
+    "awayjourneytotheunexpected": [
+        {
+            "Author": "TheSlowHipster",
+            "GameName": "Away Journey to the Unexpected",
+            "Serial": "JJJJJ-22222-LLLLL",
+            "ServiceType": "Steam"
+        }
+    ],
+    "1screenplatformer": [
+        {
+            "Author": "User",
+            "GameName": "1 Screen Platformer",
+            "Serial": "EEEEE-AAAAA-DDDDD",
+            "ServiceType": "Steam"
+        }
+    ],
+    "adventureboycheapskatedx": [
+        {
+            "Author": "User",
+            "GameName": "Adventure Boy Cheapskate DX",
+            "Serial": "GGGGG-GGGGG-PPPPP",
+            "ServiceType": "Steam"
+        }
+    ],
+    "ageofwondersiii": [
+        {
+            "Author": "crispChip",
+            "GameName": "Age of Wonders III",
+            "Serial": "99999-YYYYY-VVVVV",
+            "ServiceType": "Steam"
+        }
+    ],
+    "aglider'sjourney": [
+        {
+            "Author": "BozoTheClown",
+            "GameName": "A Glider's Journey",
+            "Serial": "EEEEE-WWWWW-33333",
+            "ServiceType": "Steam"
+        },
+        {
+            "Author": "TheSlowHipster",
+            "GameName": "A Glider's Journey",
+            "Serial": "EEEEE-WWWWW-33333",
+            "ServiceType": "Steam"
+        },
+        {
+            "Author": "TheSlowHipster",
+            "GameName": "A Glider's Journey",
+            "Serial": "EEEEE-WWWWW-33333",
+            "ServiceType": "Steam"
+        },
+        {
+            "Author": "TheSlowHipster",
+            "GameName": "A Glider's Journey",
+            "Serial": "EEEEE-WWWWW-33333",
+            "ServiceType": "Steam"
+        },
+        {
+            "Author": "TheSlowHipster",
+            "GameName": "A Glider's Journey",
+            "Serial": "EEEEE-WWWWW-33333",
+            "ServiceType": "Steam"
+        },
+        {
+            "Author": "TheSlowHipster",
+            "GameName": "A Glider's Journey",
+            "Serial": "EEEEE-WWWWW-33333",
+            "ServiceType": "Steam"
+        },
+        {
+            "Author": "TheSlowHipster",
+            "GameName": "A Glider's Journey",
+            "Serial": "https://youtube.com",
+            "ServiceType": "Web"
+        }
+    ],
+    "ancestorslegacy": [
+        {
+            "Author": "GooglePi",
+            "GameName": "Ancestors Legacy",
+            "Serial": "99999-99999-99999",
+            "ServiceType": "Steam"
+        },
+        {
+            "Author": "LinusTorvalds",
+            "GameName": "Ancestors Legacy",
+            "Serial": "44444-QQQQQ-44444",
+            "ServiceType": "Steam"
+        }
+    ]
+}

@@ -14,7 +14,6 @@ origin   = '^[a-z,A-Z,0-9]{4}-[a-z,A-Z,0-9]{4}-[a-z,A-Z,0-9]{4}-[a-z,A-Z,0-9]{4}
 url      = '^http'
 
 
-
 description = '''A bot that allows for the addition, retrieval, and storage of game keys
 in a json database for members to share with eachother.'''
 
@@ -28,11 +27,15 @@ with open(config["DbFile"]) as f:
 
 intents = discord.Intents.default()
 
-bot = commands.Bot(command_prefix='!', description=description, intents=intents)
+bot = commands.Bot(command_prefix=config["Prefix"], description=description, intents=intents)
 
 def write_json(data, filename=config["DbFile"]):
 	with open(filename, 'w') as f:
 		json.dump(data, f, indent=4)
+	
+@bot.command()
+async def test(ctx):
+	await ctx.send(f"{ctx.author}")
 
 @bot.command()
 async def listkeys(ctx):
@@ -41,7 +44,7 @@ async def listkeys(ctx):
 	while count < len(games.keys()):
 		embed = discord.Embed(
 			title = "Current Key List",
-			description = f"Games {count} to {count+20}"
+			description = f"Games {count+1} to {count+21}"
 		)
 		for i in range(20):
 			if count >= len(gms):
@@ -77,7 +80,9 @@ async def addKey(ctx, *args):
 	elif re.match(url,serial) != None:
 		serv = "Web"
 	else:
-		serv = "Unknown"
+		await ctx.send(f"{ctx.author.name} I don't recognize that key format.")
+		await ctx.message.delete()
+		return
 	tmp = {
 			"Author"      : auth,
 			"GameName"    : name,
@@ -91,5 +96,58 @@ async def addKey(ctx, *args):
 	write_json(games)
 	await ctx.send(f"{ctx.author.name} added a {serv} Key for {name}!")
 	await ctx.message.delete()
+
+@bot.command()
+async def takeKey(ctx, *args):
+	game = ""
+	name = ""
+	for word in args:
+		game += word
+		name += word + " "
+	game = game.lower()
+	name = name[:len(name)-1]
+
+	if game not in games.keys():
+		await ctx.send(f"I'm sorry {ctx.author.name}, I couldn't find a key for {name}.")
+	else:
+		await ctx.send(f"Have fun with your key for {name}, {ctx.author.name}!")
+		tmp = games[game].pop()
+		embed = discord.Embed(
+			title = f"{tmp['GameName']}",
+			description = f"Provided by: {tmp['Author']}"
+		)
+		embed.add_field(name = f"Key: {tmp['Serial']}", value= f"Store: {tmp['ServiceType']}")
+		await ctx.author.send(embed=embed)
+		if len(games[game]) == 0:
+			del games[game]
+		write_json(games)
+
+@bot.command()
+async def searchKey(ctx, *args):
+	game = ""
+	name = ""
+	for word in args:
+		game += word
+		name += word + " "
+	game = game.lower()
+	name = name[:len(name)-1]
+
+	if game not in games.keys():
+		await ctx.send(f"I'm sorry {ctx.author.name}, I couldn't find any keys for {name}.")
+	else:
+		embed = discord.Embed(
+			title = f"Keys found for: {name}",
+			description = f"{len(games[game])} keys found for {name}"
+		)
+		servs = {}
+		for key in games[game]:
+			if key["ServiceType"] not in servs.keys():
+				servs[key["ServiceType"]] = 1
+			else:
+				servs[key["ServiceType"]] += 1
+		for service in servs.keys():
+			embed.add_field(name=f"{service}",value=f"{servs[service]} keys found")
+		await ctx.send(embed=embed)
+		
 
 bot.run(config["Token"])
