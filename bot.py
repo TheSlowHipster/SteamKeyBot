@@ -11,7 +11,7 @@ client = discord.Client()
 
 @client.event
 async def on_ready():
-	print(f"Logged in as {user}")
+	print(f"Logged in as {client.user}")
 
 @client.event
 async def on_message(message):
