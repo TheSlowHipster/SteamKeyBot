@@ -13,6 +13,8 @@ uplayTwo = '^[a-z,A-Z,0-9]{3}-[a-z,A-Z,0-9]{4}-[a-z,A-Z,0-9]{4}-[a-z,A-Z,0-9]{4}
 origin   = '^[a-z,A-Z,0-9]{4}-[a-z,A-Z,0-9]{4}-[a-z,A-Z,0-9]{4}-[a-z,A-Z,0-9]{4}-[a-z,A-Z,0-9]{4}$'
 url      = '^http'
 
+
+
 description = '''A bot that allows for the addition, retrieval, and storage of game keys
 in a json database for members to share with eachother.'''
 
@@ -27,6 +29,10 @@ with open(config["DbFile"]) as f:
 intents = discord.Intents.default()
 
 bot = commands.Bot(command_prefix='!', description=description, intents=intents)
+
+def write_json(data, filename=config["DbFile"]):
+	with open(filename, 'w') as f:
+		json.dump(data, f, indent=4)
 
 @bot.command()
 async def listkeys(ctx):
@@ -56,6 +62,8 @@ async def addKey(ctx, *args):
 	for word in args[:len(args)-1]:
 		name += word + " "
 		game += word
+	name = name[:len(name)-1]
+	game = game.lower()
 	if re.match(gog,serial) != None:
 		serv = "GoG"
 	elif re.match(steamOne,serial) != None or re.search(steamTwo,serial) != None:
@@ -77,8 +85,11 @@ async def addKey(ctx, *args):
 			"ServiceType" : serv
 		}
 	if game not in games.keys():
-		games[game] = tmp
+		games[game] = [tmp]
 	else:
 		games[game].append(tmp)
+	write_json(games)
+	await ctx.send(f"{ctx.author.name} added a {serv} Key for {name}!")
+	await ctx.message.delete()
 
 bot.run(config["Token"])
