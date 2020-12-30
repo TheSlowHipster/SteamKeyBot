@@ -4,6 +4,9 @@ import json
 import logging
 import re
 
+''' 
+	Global regex strings for each of the known key types
+'''
 gog      = '^[a-z,A-Z,0-9]{5}-[a-z,A-Z,0-9]{5}-[a-z,A-Z,0-9]{5}-[a-z,A-Z,0-9]{5}$'
 steamOne = '^[a-z,A-Z,0-9]{5}-[a-z,A-Z,0-9]{5}-[a-z,A-Z,0-9]{5}$'
 steamTwo = '^[a-z,A-Z,0-9]{5}-[a-z,A-Z,0-9]{5}-[a-z,A-Z,0-9]{5}-[a-z,A-Z,0-9]{5}-[a-z,A-Z,0-9]{5}$'
@@ -13,32 +16,41 @@ uplayTwo = '^[a-z,A-Z,0-9]{3}-[a-z,A-Z,0-9]{4}-[a-z,A-Z,0-9]{4}-[a-z,A-Z,0-9]{4}
 origin   = '^[a-z,A-Z,0-9]{4}-[a-z,A-Z,0-9]{4}-[a-z,A-Z,0-9]{4}-[a-z,A-Z,0-9]{4}-[a-z,A-Z,0-9]{4}$'
 url      = '^http'
 
+'''
+	Description for the help command
+'''
+description = '''A bot that allows for the addition, retrieval, and storage of game keys in a json database for members to share with eachother.
 
-description = '''A bot that allows for the addition, retrieval, and storage of game keys
-in a json database for members to share with eachother.'''
+Written by @TheSlowHipster
+'''
 
+# Log to a file
 logging.basicConfig(level=logging.INFO,filename="discord.log")
 
+# Open the proper json files for config and the database
 with open("conf.json") as f:
 	config = json.load(f)
 
 with open(config["DbFile"]) as f:
 	games = json.load(f)
 
+# Set the intents and default options for @bot.command()
 intents = discord.Intents.default()
-
 bot = commands.Bot(command_prefix=config["Prefix"], description=description, intents=intents)
 
+# Function that updates the json database
 def write_json(data, filename=config["DbFile"]):
 	with open(filename, 'w') as f:
 		json.dump(data, f, indent=4)
-	
-@bot.command()
-async def test(ctx):
-	await ctx.send(f"{ctx.author}")
 
-@bot.command()
-async def listkeys(ctx):
+
+
+'''
+	Actual Bot Functionality
+'''
+# List all the keys in the database as a series of embeds
+@bot.command(aliases=["listkeys","list"], description="List all games in the database")
+async def listKeys(ctx):
 	count = 0
 	gms = list(games.keys())
 	while count < len(games.keys()):
@@ -56,8 +68,12 @@ async def listkeys(ctx):
 			
 		await ctx.author.send(embed=embed)
 
-@bot.command()
+# Add a key to the database
+@bot.command(usage="Game Name KEY", aliases=["add","addkey","Addkey","AddKey"], description="Add a game key to the database")
 async def addKey(ctx, *args):
+	if len(args) <= 0:
+		await ctx.send(f"This command requires arguments! Try `{config['Prefix']}help addKey` to find out more!")
+		return
 	serial = args[len(args)-1]
 	auth = ctx.author.name
 	name = ""
@@ -97,8 +113,12 @@ async def addKey(ctx, *args):
 	await ctx.send(f"{ctx.author.name} added a {serv} Key for {name}!")
 	await ctx.message.delete()
 
-@bot.command()
+# Pop the desired key from the database
+@bot.command(usage=f"Game Name", aliases=["take"], description="Allows you to take a key from the database")
 async def takeKey(ctx, *args):
+	if len(args) <= 0:
+		await ctx.send(f"This command requires arguments! Try `{config['Prefix']}help takeKey` to find out more!")
+		return
 	game = ""
 	name = ""
 	for word in args:
@@ -122,8 +142,12 @@ async def takeKey(ctx, *args):
 			del games[game]
 		write_json(games)
 
-@bot.command()
+# Search for a desired game in the database
+@bot.command(usage=f"Game Name", aliases=["search","Search","Searchkey","SearchKey"], description="Searches for a specific game in the database")
 async def searchKey(ctx, *args):
+	if len(args) <= 0:
+		await ctx.send(f"This command requires arguments! Try `{config['Prefix']}help searchKey` to find out more!")
+		return
 	game = ""
 	name = ""
 	for word in args:
