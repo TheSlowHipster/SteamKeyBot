@@ -54,9 +54,12 @@ async def listKeys(ctx):
 	count = 0
 	gms = list(games.keys())
 	while count < len(games.keys()):
+		max = 20
+		if count + max >= len(games.keys()):
+			max = len(games.keys())-count
 		embed = discord.Embed(
 			title = "Current Key List",
-			description = f"Games {count+1} to {count+21}"
+			description = f"Games {count+1} to {count+max}"
 		)
 		for i in range(20):
 			if count >= len(gms):
