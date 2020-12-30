@@ -96,8 +96,9 @@ async def addKey(ctx, *args):
 	elif re.match(url,serial) != None:
 		serv = "Web"
 	else:
-		await ctx.send(f"{ctx.author.name} I don't recognize that key format.")
-		await ctx.message.delete()
+		await ctx.send(f"{ctx.author.name}, I don't recognize that key format.")
+		if not isinstance(ctx.channel, discord.channel.DMChannel):
+			await ctx.message.delete()
 		return
 	tmp = {
 			"Author"      : auth,
@@ -111,7 +112,10 @@ async def addKey(ctx, *args):
 		games[game].append(tmp)
 	write_json(games)
 	await ctx.send(f"{ctx.author.name} added a {serv} Key for {name}!")
-	await ctx.message.delete()
+	if not isinstance(ctx.channel, discord.channel.DMChannel):
+		await ctx.message.delete()
+	else:
+		await ctx.send(f"I do not currently have the ability to delete messages in a DM channel, please delete the message containing the key!")
 
 # Pop the desired key from the database
 @bot.command(usage=f"Game Name", aliases=["take"], description="Allows you to take a key from the database")
