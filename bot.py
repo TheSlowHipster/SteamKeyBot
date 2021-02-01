@@ -49,7 +49,7 @@ def write_json(data, filename=config["DbFile"]):
 	Actual Bot Functionality
 '''
 # List all the keys in the database as a series of embeds
-@bot.command(aliases=["listkeys","list"], description="List all games in the database")
+@bot.command(aliases=["listkeys","list", "keys","Keys"], description="List all games in the database")
 async def listKeys(ctx):
 	count = 0
 	gms = list(games.keys())
@@ -72,7 +72,7 @@ async def listKeys(ctx):
 		await ctx.author.send(embed=embed)
 
 # Add a key to the database
-@bot.command(usage="Game Name KEY", aliases=["add","addkey","Addkey","AddKey"], description="Add a game key to the database")
+@bot.command(usage="Game Name KEY\n\nPlease provide the name of the game you wish to add followed by the key for the game.", aliases=["add","addkey","Addkey","AddKey"], description="Add a game key to the database")
 async def addKey(ctx, *args):
 	if len(args) <= 0:
 		await ctx.send(f"This command requires arguments! Try `{config['Prefix']}help addKey` to find out more!")
@@ -118,10 +118,10 @@ async def addKey(ctx, *args):
 	if not isinstance(ctx.channel, discord.channel.DMChannel):
 		await ctx.message.delete()
 	else:
-		await ctx.send(f"I do not currently have the ability to delete messages in a DM channel, please delete the message containing the key!")
+		await ctx.send(f"I do not currently have the ability to delete messages in a DM channel, but I have stored your key! So you don't try to use it later please delete your message.")
 
 # Pop the desired key from the database
-@bot.command(usage=f"Game Name", aliases=["take"], description="Allows you to take a key from the database")
+@bot.command(usage=f"Game Name", aliases=["take","takekey"], description="Allows you to take a key from the database")
 async def takeKey(ctx, *args):
 	if len(args) <= 0:
 		await ctx.send(f"This command requires arguments! Try `{config['Prefix']}help takeKey` to find out more!")
