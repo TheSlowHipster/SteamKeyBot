@@ -4,6 +4,8 @@ import json
 import logging
 import re
 
+client = discord.Client
+
 ''' 
 	Global regex strings for each of the known key types
 '''
@@ -74,9 +76,17 @@ async def listKeys(ctx):
 # Add a key to the database
 @bot.command(usage="Game Name KEY\n\nPlease provide the name of the game you wish to add followed by the key for the game.", aliases=["add","addkey","Addkey","AddKey"], description="Add a game key to the database")
 async def addKey(ctx, *args):
-	if len(args) <= 0:
-		await ctx.send(f"This command requires arguments! Try `{config['Prefix']}help addKey` to find out more!")
-		return
+	# if len(args) <= 0:
+	# 	await ctx.send(f"This command requires arguments! Try `{config['Prefix']}help addKey` to find out more!")
+	# 	return
+
+	await ctx.send("What is the name of the game you want to send?")
+
+	def get_gameName(m):
+		return m.author == ctx.author and m.channel == ctx.channel
+
+	msg = await client.wait_for('message', check=get_gameName)
+	await ctx.send("Thanks!")
 	serial = args[len(args)-1]
 	auth = ctx.author.name
 	name = ""
