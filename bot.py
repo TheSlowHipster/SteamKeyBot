@@ -3,8 +3,7 @@ from discord.ext import commands
 import json
 import logging
 import re
-
-client = discord.Client
+import asyncio
 
 ''' 
 	Global regex strings for each of the known key types
@@ -76,26 +75,23 @@ async def listKeys(ctx):
 # Add a key to the database
 @bot.command(usage="Game Name KEY\n\nPlease provide the name of the game you wish to add followed by the key for the game.", aliases=["add","addkey","Addkey","AddKey"], description="Add a game key to the database")
 async def addKey(ctx, *args):
-	# if len(args) <= 0:
-	# 	await ctx.send(f"This command requires arguments! Try `{config['Prefix']}help addKey` to find out more!")
-	# 	return
+	
 
-	await ctx.send("What is the name of the game you want to send?")
+	ack_0 = await ctx.send("What is the name of the game you want to send?")
 
 	def get_gameName(m):
 		return m.author == ctx.author and m.channel == ctx.channel
 
-	msg = await client.wait_for('message', check=get_gameName)
-	await ctx.send("Thanks!")
-	serial = args[len(args)-1]
-	auth = ctx.author.name
-	name = ""
-	game = ""
-	for word in args[:len(args)-1]:
-		name += word + " "
-		game += word
-	name = name[:len(name)-1]
-	game = game.lower()
+	info = await bot.wait_for('message', check=get_gameName)
+	name = info.content
+	game = info.content.replace(" ","").lower()
+	ack_1 = await ctx.send(f"Awesome! What is the key associated with that game?")
+
+	def get_serial(m):
+		return m.author == ctx.author and m.channel == ctx.channel
+
+	msg = await bot.wait_for('message', check=get_serial)
+	serial = msg.content
 	if re.match(gog,serial) != None:
 		serv = "GoG"
 	elif re.match(steamOne,serial) != None or re.search(steamTwo,serial) != None:
@@ -110,9 +106,11 @@ async def addKey(ctx, *args):
 		serv = "Web"
 	else:
 		await ctx.send(f"{ctx.author.name}, I don't recognize that key format.")
-		if not isinstance(ctx.channel, discord.channel.DMChannel):
-			await ctx.message.delete()
 		return
+	
+	auth = ctx.author.name
+	
+	
 	tmp = {
 			"Author"      : auth,
 			"GameName"    : name,
@@ -126,6 +124,10 @@ async def addKey(ctx, *args):
 	write_json(games)
 	await ctx.send(f"{ctx.author.name} added a {serv} Key for {name}!")
 	if not isinstance(ctx.channel, discord.channel.DMChannel):
+		await msg.delete()
+		await ack_1.delete()
+		await info.delete()
+		await ack_0.delete()
 		await ctx.message.delete()
 	else:
 		await ctx.send(f"I do not currently have the ability to delete messages in a DM channel, but I have stored your key! So you don't try to use it later please delete your message.")
