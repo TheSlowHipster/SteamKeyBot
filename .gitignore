@@ -1,4 +1,5 @@
+conf.json
+db.json
 .vscode
 discord.log
-conf.json
-testdb.json
+*.json

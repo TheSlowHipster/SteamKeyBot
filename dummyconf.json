@@ -1,5 +1,5 @@
 {
-	"Token": "YOUR-TOKEN-HERE",
+	"Token": "YOUR-TOKEN-GOES-HERE",
 	"DbFile": "dummydb.json",
 	"Prefix":"!"
 }
