@@ -1,3 +1,5 @@
+conf.json
+db.json
 .vscode
 discord.log
-*.json
+dummydb.json
