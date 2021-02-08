@@ -73,10 +73,9 @@ async def listKeys(ctx):
 		await ctx.author.send(embed=embed)
 
 # Add a key to the database
-@bot.command(usage="Game Name KEY\n\nPlease provide the name of the game you wish to add followed by the key for the game.", aliases=["add","addkey","Addkey","AddKey"], description="Add a game key to the database")
-async def addKey(ctx, *args):
-	
-
+@bot.command(usage="Prompts you for a game name and key to be added to the database.", aliases=["add","addkey","Addkey","AddKey","addGame","addgame","AddGame","Addgame"], description="Add a game key to the database")
+async def addKey(ctx):
+	# if at least one argument provided
 	ack_0 = await ctx.send("What is the name of the game you want to send?")
 
 	def get_gameName(m):
@@ -105,9 +104,9 @@ async def addKey(ctx, *args):
 	elif re.match(url,serial) != None:
 		serv = "Web"
 	else:
-		await ctx.send(f"{ctx.author.name}, I don't recognize that key format.")
+		await ctx.send(f"{ctx.author.name}, I don't recognize that key format, please try again")
 		return
-	
+		
 	auth = ctx.author.name
 	
 	
@@ -133,18 +132,19 @@ async def addKey(ctx, *args):
 		await ctx.send(f"I do not currently have the ability to delete messages in a DM channel, but I have stored your key! So you don't try to use it later please delete your message.")
 
 # Pop the desired key from the database
-@bot.command(usage=f"Game Name", aliases=["take","takekey"], description="Allows you to take a key from the database")
-async def takeKey(ctx, *args):
-	if len(args) <= 0:
-		await ctx.send(f"This command requires arguments! Try `{config['Prefix']}help takeKey` to find out more!")
-		return
-	game = ""
-	name = ""
-	for word in args:
-		game += word
-		name += word + " "
-	game = game.lower()
-	name = name[:len(name)-1]
+@bot.command(usage=f"Take a key from the database.", aliases=["take","takekey","TakeKey","takeGame","takegame","TakeGame"], description="Allows you to take a key from the database")
+async def takeKey(ctx):
+	ack_0 = await ctx.send("What game do you want to take?")
+	
+	def get_gameName(m):
+		return m.author == ctx.author and m.channel == ctx.channel
+	
+	info = await bot.wait_for('message', check=get_gameName)
+
+	game = info.content.replace(" ","").lower()
+	name = info.content
+
+	await ctx.send(f"Searching for `{game}`")
 
 	if game not in games.keys():
 		await ctx.send(f"I'm sorry {ctx.author.name}, I couldn't find a key for {name}.")
@@ -162,18 +162,17 @@ async def takeKey(ctx, *args):
 		write_json(games)
 
 # Search for a desired game in the database
-@bot.command(usage=f"Game Name", aliases=["search","Search","Searchkey","SearchKey"], description="Searches for a specific game in the database")
-async def searchKey(ctx, *args):
-	if len(args) <= 0:
-		await ctx.send(f"This command requires arguments! Try `{config['Prefix']}help searchKey` to find out more!")
-		return
-	game = ""
-	name = ""
-	for word in args:
-		game += word
-		name += word + " "
-	game = game.lower()
-	name = name[:len(name)-1]
+@bot.command(usage=f"Search the database for a game.", aliases=["search","Search","Searchkey","SearchKey"], description="Searches for a specific game in the database")
+async def searchKey(ctx):
+	ack_0 = await ctx.send("What game are you looking for?")
+	
+	def get_gameName(m):
+		return m.author == ctx.author and m.channel == ctx.channel
+	
+	info = await bot.wait_for('message', check=get_gameName)
+
+	game = info.content.replace(" ","").lower()
+	name = info.content
 
 	if game not in games.keys():
 		await ctx.send(f"I'm sorry {ctx.author.name}, I couldn't find any keys for {name}.")
